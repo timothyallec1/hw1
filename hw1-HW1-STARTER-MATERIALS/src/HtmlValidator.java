@@ -1,6 +1,7 @@
-/**
- * Add your own comments
- */
+// timothy allec 1/23/2023
+//collaborators include: d'artagnan, grace, phinehas, vincent, egr227 hints
+
+
 import java.util.*;
 
 public class HtmlValidator {
