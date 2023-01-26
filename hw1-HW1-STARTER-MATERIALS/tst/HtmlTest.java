@@ -1,8 +1,6 @@
-// timothy allec 1/23/2023
-//collaborators include: d'artagnan, grace, phinehas, vincent, egr227 hints
-
 import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.html.HTMLUListElement;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -10,17 +8,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class HtmlValidatorTest {
-    /** Below code returns the String format
+public class HtmlTest {
+
+ /** Below code returns the String format
      * of the content of the given file
      * @param expectedFileName The name of the file that has expected output
      *                         Make sure put relative path in front of
      *                         the file name
      *                         (For example, if your files under tst folder,
-     *                         expectedFileName should be "tst/YOUR_FILE_NAME"
-     * @return The String format of what the expectedFileName contains
+            *                         expectedFileName should be "tst/YOUR_FILE_NAME"
+            * @return The String format of what the expectedFileName contains
 
-     */
+  */
     private static String expectedOutputToString (String expectedFileName) {
         StringBuilder sb = new StringBuilder();
         try {
@@ -51,10 +50,23 @@ public class HtmlValidatorTest {
         return baos.toString();
     }
 
-    /**    * This test is an instructor given test case to show you some example
+
+ /**    * This test is an instructor given test case to show you some example
      * of testing your validate() method
      * <b>Hi</b><br/> is the hypothetical html file to test
-     * */
+  * */
+    public void test0(){
+        //<b>Hi</b><br/>
+        Queue<HtmlTag> tags = new LinkedList<>();
+        tags.add(new HtmlTag("b", true));      // <b>
+        tags.add(new HtmlTag("b", false));     // </b>
+        tags.add(new HtmlTag("br"));           // <br/>
+        HtmlValidator validator = new HtmlValidator(tags);
+
+        //Note test0_expected_output.txt is placed under tst. Use relative path!
+        Assert.assertEquals(expectedOutputToString("tst/test0_expected_output.txt"),
+                validatorOutputToString(validator));
+    }
 
     @Test
     public void test1() {
@@ -67,7 +79,7 @@ public class HtmlValidatorTest {
 
         Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test1.txt"),
                 validatorOutputToString(validator));
-    }
+         }
 
     @Test
     public void test2() {
@@ -96,6 +108,7 @@ public class HtmlValidatorTest {
                 validatorOutputToString(validator));
     }
 
+
     @Test
     public void test4() {
         Queue<HtmlTag> tags = new LinkedList<>();
@@ -123,7 +136,7 @@ public class HtmlValidatorTest {
 
 
     }
-    // test 6 is an empty test, no tags added
+// test 6 is an empty test, no tags added
     @Test
     public void test6() {
         Queue<HtmlTag> tags = new LinkedList<>();

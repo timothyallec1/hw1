@@ -6,62 +6,62 @@ import java.util.*;
 
 public class HtmlValidator {
 
-    private Queue<HtmlTag> tagsList;
+    private Queue<HtmlTag> queue;
 
    // creates an empty queue
     public HtmlValidator() {
-        tagsList = new LinkedList<>();
+        queue= new LinkedList<>();
     }
 
      //Create an HtmlValidator with the content of tags
      //creates a copy of the passed in queue
 
     public HtmlValidator(Queue<HtmlTag> tags) {
-        this.tagsList = new LinkedList<>(tags);
+        this.queue = new LinkedList<>(tags);
         if (tags == null) {
-            throw new IllegalArgumentException("cannot be null.");
+            throw new IllegalArgumentException("null.");
         }
     }
 
     // this adds tag to HtmlValidator
     public void addTag(HtmlTag tag) {
+        queue.add(tag);
         if (tag == null) {
-            throw new IllegalArgumentException("Cannot add a null tag");
+            throw new IllegalArgumentException("null");
         }
-        tagsList.add(tag);
     }
 
     // returns copy of the tags in HtmlValidator
     public Queue<HtmlTag> getTags() {
         // return a deep copy of tags
-        return new LinkedList<>(tagsList);
+        return new LinkedList<>(queue);
     }
 
     // this removes any elements that matches each other
     public void removeAll(String element) {
-        if (element == null) throw new IllegalArgumentException();
-        tagsList.removeIf(tag -> tag.getElement().equalsIgnoreCase(element));
-
-    }
+            queue.removeIf(tag -> tag.getElement().equalsIgnoreCase(element));
+            if (element == null) throw new IllegalArgumentException();
+        }
 
     // prints out properly formatted HTML code from HtmlValidator
     public void validate() {
+        int size = queue.size();
         Stack<HtmlTag> openTags = new Stack<>();
-        for(int i = 0; i < tagsList.size(); i++) {
-            HtmlTag tag = tagsList.remove();
-            tagsList.add(tag);
-
-            if (tag.isSelfClosing()) {
-                printWithIndentation(tag, openTags.size());
-            } else if (tag.isOpenTag()) {
-                printWithIndentation(tag, openTags.size());
-                openTags.push(tag);
-            } else if (!openTags.isEmpty() && tag.matches(openTags.peek())) { // By exhaustion, the tag must be a closing tag
+        for(int i = 0; i < size; i++) {
+            HtmlTag html = queue.remove();
+            queue.add(html);
+            if (html.isSelfClosing()) {
+                print(html, openTags.size());
+            } else if (html.isOpenTag()) {
+                print(html, openTags.size());
+                openTags.push(html);
+            } else if (!openTags.isEmpty() && html.matches(openTags.peek())) { // By exhaustion, the tag must be a closing tag
                 // Closing tag should be at same depth as opening, so we pop before printing
                 openTags.pop();
-                printWithIndentation(tag, openTags.size());
-            } else {
-                System.out.println("ERROR unexpected tag: " + tag.toString());
+                print(html, openTags.size());
+            }
+                    else {
+                System.out.println("ERROR unexpected tag: " + html.toString());
             }
         }
         // Deal with unclosed tags
@@ -72,7 +72,7 @@ public class HtmlValidator {
     }
 
     // Helper function to make printing at given indentation more convenient
-    private static void printWithIndentation(HtmlTag tag, int indentationLevel) {
+    private static void print(HtmlTag tag, int indentationLevel) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < indentationLevel; i++) {
             sb.append("    ");

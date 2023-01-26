@@ -73,7 +73,7 @@ public class HtmlTag {
     // a set of tags that don't need to be matched (self-closing)
     private static final Set<String> SELF_CLOSING_TAGS = new HashSet<String>(
             Arrays.asList("!doctype", "!--", "?xml", "xml", "area", "base",
-                          "basefont", "br", "col", "frame", "hr", "img",
+                          "basefont", "/br", "col", "frame", "hr", "img",
                           "input", "link", "meta", "param"));
     
     // all whitespace characters; used in text parsing
