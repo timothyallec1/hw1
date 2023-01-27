@@ -1,32 +1,21 @@
-// timothy allec 1/23/2023
-//collaborators include: d'artagnan, grace, phinehas, vincent, egr227 hints
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
-public class HtmlValidatorTest {
-    /** Below code returns the String format
-     * of the content of the given file
-     * @param expectedFileName The name of the file that has expected output
-     *                         Make sure put relative path in front of
-     *                         the file name
-     *                         (For example, if your files under tst folder,
-     *                         expectedFileName should be "tst/YOUR_FILE_NAME"
-     * @return The String format of what the expectedFileName contains
+/* timothy allec 1/26/2023 EGR 227 hw1
+collaborators include: d'artagnan, grace, phinehas, vincent, egr227 hints, amber harris
+*/
 
-     */
-    private static String expectedOutputToString (String expectedFileName) {
+public class HtmlValidatorTest {
+
+    // this code returns what was given in the file to a string
+    private static String expectedOutputToString(String expectedFileName) {
         StringBuilder sb = new StringBuilder();
         try {
             Scanner fileScanner = new Scanner(new File(expectedFileName));
             while (fileScanner.hasNextLine()) {
-                sb.append(fileScanner.nextLine()+ System.lineSeparator());
+                sb.append(fileScanner.nextLine() + System.lineSeparator());
             }
         } catch (FileNotFoundException ex) {
             Assert.fail(expectedFileName + "not found. Make sure this file exists. Use relative path to root in front of the file name");
@@ -34,12 +23,7 @@ public class HtmlValidatorTest {
         return sb.toString();
     }
 
-    /** Below code returns the String format
-     * of what your validator's validate prints to the console
-     * Feel free to use it so that you can compare it with the expected string
-     * @param validator HtmlValidator to test
-     * @return String format of what HtmlValidator's validate outputs
-     */
+    // this method returns the string of what the validator method prints to the console
     private static String validatorOutputToString(HtmlValidator validator) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
@@ -51,191 +35,252 @@ public class HtmlValidatorTest {
         return baos.toString();
     }
 
-    /**    * This test is an instructor given test case to show you some example
-     * of testing your validate() method
-     * <b>Hi</b><br/> is the hypothetical html file to test
-     * */
-
+ // this tests the ability to add a tag to the html validator (addTag method)
     @Test
-    public void test1() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        tags.add(new HtmlTag("b",true));  //<b>
-        tags.add(new HtmlTag("i",true)); //<i>
-        tags.add(new HtmlTag("i",false)); //</i>
-        tags.add(new HtmlTag("b", false)); ///b
-        HtmlValidator validator = new HtmlValidator(tags);
+    public void addTagTest1() {
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test1.txt"),
-                validatorOutputToString(validator));
+        HtmlTag[] Array = {new HtmlTag("The "), new HtmlTag("Sky")};
+        Queue<HtmlTag> q = new LinkedList<>(Arrays.asList(Array));
+        HtmlValidator v = new HtmlValidator();
+        for(int i = 0; i < q.size(); i++){
+            v.getTags();
+        }
+        q.forEach(v::addTag);
+        Assert.assertEquals(q, v.getTags());
+    }
+    // another addTag test
+    @Test
+    public void addTagTest2() {
+
+        HtmlTag[] Array = {new HtmlTag(""), new HtmlTag("$")};
+        Queue<HtmlTag> q = new LinkedList<>(Arrays.asList(Array));
+        HtmlValidator v = new HtmlValidator();
+        for(int i = 0; i < q.size(); i++){
+            v.getTags();
+        }
+        q.forEach(v::addTag);
+        Assert.assertEquals(q, v.getTags());
     }
 
+    // this tests the ability to remove a chosen element from the htmlValidator
+    @Test
+    public void removeAllTest1() {
+        HtmlTag[] qArray = {new HtmlTag("The"), new HtmlTag("Sky")};
+        List<HtmlTag> q = new ArrayList<>(Arrays.asList(qArray));
+        HtmlValidator v = new HtmlValidator();
+            q.forEach(v::addTag);
+            v.addTag(new HtmlTag("Is"));
+            v.addTag(new HtmlTag("Blue"));
+            v.removeAll("Is");
+            v.removeAll("Blue");
+        Assert.assertEquals(q, v.getTags());
+    }
+// another removeAll test
+    @Test
+    public void removeAllTest2() {
+        HtmlTag[] qArray = {new HtmlTag("What time")};
+        List<HtmlTag> q = new ArrayList<>(Arrays.asList(qArray));
+        HtmlValidator v = new HtmlValidator();
+            q.forEach(v::addTag);
+            v.addTag(new HtmlTag("Is IT??!"));
+            v.removeAll("Is IT??!");
+        Assert.assertEquals(q, v.getTags());
+
+    }
+    // another removeAll test with an empty instantiated HtmlTagArray
+    @Test
+    public void removeAllTest3() {
+        HtmlTag[] qArray = {new HtmlTag("")};
+        List<HtmlTag> q = new ArrayList<>(Arrays.asList(qArray));
+        HtmlValidator v = new HtmlValidator();
+            q.forEach(v::addTag);
+            v.addTag(new HtmlTag("."));
+            v.addTag(new HtmlTag("/"));
+            v.removeAll(".");
+            v.removeAll("/");
+        Assert.assertEquals(q, v.getTags());
+    }
+    // ensures Validate method works for the expected output of test1
+    public void test1() {
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("b", true));  //<b>
+        q.add(new HtmlTag("i", true)); //<i>
+        q.add(new HtmlTag("i", false)); //</i>
+        q.add(new HtmlTag("b", false)); ///b
+        HtmlValidator v = new HtmlValidator(q);
+
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test1.txt"),
+                validatorOutputToString(v));
+    }
+    // ensures Validate method works for the expected output of test2
     @Test
     public void test2() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        tags.add(new HtmlTag("html",true));  //<b>
-        tags.add(new HtmlTag("b",true)); //<i>
-        tags.add(new HtmlTag("i",true)); //</i>
-        tags.add(new HtmlTag("i", false)); ///b
-        HtmlValidator validator = new HtmlValidator(tags);
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("html", true));  //<b>
+        q.add(new HtmlTag("b", true)); //<i>
+        q.add(new HtmlTag("i", true)); //</i>
+        q.add(new HtmlTag("i", false)); ///b
+        HtmlValidator v = new HtmlValidator(q);
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test2.txt"),
-                validatorOutputToString(validator));
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test2.txt"),
+                validatorOutputToString(v));
     }
 
-
+    // ensures Validate method works for the expected output of test3
     @Test
     public void test3() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        tags.add(new HtmlTag("b",true));
-        tags.add(new HtmlTag("i",true));
-        tags.add(new HtmlTag("b",false));
-        tags.add(new HtmlTag("i", false));
-        HtmlValidator validator = new HtmlValidator(tags);
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("b", true));
+        q.add(new HtmlTag("i", true));
+        q.add(new HtmlTag("b", false));
+        q.add(new HtmlTag("i", false));
+        HtmlValidator v = new HtmlValidator(q);
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test3.txt"),
-                validatorOutputToString(validator));
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test3.txt"),
+                validatorOutputToString(v));
     }
 
+    // ensures Validate method works for the expected output of test4
     @Test
     public void test4() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        tags.add(new HtmlTag("b",true));
-        tags.add(new HtmlTag("i",true));
-        tags.add(new HtmlTag("b",false));
-        tags.add(new HtmlTag("i", false));
-        tags.add(new HtmlTag("b",false));
-        tags.add(new HtmlTag("html",false));
-        HtmlValidator validator = new HtmlValidator(tags);
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("b", true));
+        q.add(new HtmlTag("i", true));
+        q.add(new HtmlTag("b", false));
+        q.add(new HtmlTag("i", false));
+        q.add(new HtmlTag("b", false));
+        q.add(new HtmlTag("html", false));
+        HtmlValidator v = new HtmlValidator(q);
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test4.txt"),
-                validatorOutputToString(validator));
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test4.txt"),
+                validatorOutputToString(v));
 
     }
 
+    // ensures Validate method works for the expected output of test5
     @Test
     public void test5() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        tags.add(new HtmlTag("html",false));
-        HtmlValidator validator = new HtmlValidator(tags);
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("html", false));
+        HtmlValidator v = new HtmlValidator(q);
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test5.txt"),
-                validatorOutputToString(validator));
-
-
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test5.txt"),
+                validatorOutputToString(v));
     }
-    // test 6 is an empty test, no tags added
+
+    // test 6 is an empty test, no q added
     @Test
     public void test6() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        HtmlValidator validator = new HtmlValidator(tags);
+        Queue<HtmlTag> q = new LinkedList<>();
+        HtmlValidator v = new HtmlValidator(q);
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test6.txt"),
-                validatorOutputToString(validator));
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test6.txt"),
+                validatorOutputToString(v));
     }
 
+    // ensures Validate method works for the expected output of test7
     @Test
     public void test7() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        tags.add(new HtmlTag("!doctype"));
-        tags.add(new HtmlTag("!--"));
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("!doctype"));
+        q.add(new HtmlTag("!--"));
 
-        tags.add(new HtmlTag("html",true));
-        tags.add(new HtmlTag("head", true));
-        tags.add(new HtmlTag("title",true));
-        tags.add(new HtmlTag("title",false));
+        q.add(new HtmlTag("html", true));
+        q.add(new HtmlTag("head", true));
+        q.add(new HtmlTag("title", true));
+        q.add(new HtmlTag("title", false));
 
-        tags.add(new HtmlTag("meta"));
-        tags.add(new HtmlTag("link"));
-        tags.add(new HtmlTag("head",false));
-        tags.add(new HtmlTag("body",true));
+        q.add(new HtmlTag("meta"));
+        q.add(new HtmlTag("link"));
+        q.add(new HtmlTag("head", false));
+        q.add(new HtmlTag("body", true));
 
-        tags.add(new HtmlTag("p",true));
-        tags.add(new HtmlTag("a", true));
-        tags.add(new HtmlTag("a",false));
-        tags.add(new HtmlTag("p",false));
+        q.add(new HtmlTag("p", true));
+        q.add(new HtmlTag("a", true));
+        q.add(new HtmlTag("a", false));
+        q.add(new HtmlTag("p", false));
 
-        tags.add(new HtmlTag("p",true));
-        tags.add(new HtmlTag("img"));
-        tags.add(new HtmlTag("p",false));
-        tags.add(new HtmlTag("body",false));
-        tags.add(new HtmlTag("html",false));
+        q.add(new HtmlTag("p", true));
+        q.add(new HtmlTag("img"));
+        q.add(new HtmlTag("p", false));
+        q.add(new HtmlTag("body", false));
+        q.add(new HtmlTag("html", false));
 
-        HtmlValidator validator = new HtmlValidator(tags);
+        HtmlValidator v = new HtmlValidator(q);
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test7.txt"),
-                validatorOutputToString(validator));
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test7.txt"),
+                validatorOutputToString(v));
 
     }
 
+    // ensures Validate method works for the expected output of test8
     @Test
     public void test8() {
-        Queue<HtmlTag> tags = new LinkedList<>();
-        tags.add(new HtmlTag("!doctype"));
-        tags.add(new HtmlTag("!--"));
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("!doctype"));
+        q.add(new HtmlTag("!--"));
 
-        tags.add(new HtmlTag("html",true));
-        tags.add(new HtmlTag("head", true));
-        tags.add(new HtmlTag("title",true));
-        tags.add(new HtmlTag("meta"));
+        q.add(new HtmlTag("html", true));
+        q.add(new HtmlTag("head", true));
+        q.add(new HtmlTag("title", true));
+        q.add(new HtmlTag("meta"));
 
-        tags.add(new HtmlTag("link"));
-        tags.add(new HtmlTag("head",false));
-        tags.add(new HtmlTag("head",false));
-        tags.add(new HtmlTag("body", true));
+        q.add(new HtmlTag("link"));
+        q.add(new HtmlTag("head", false));
+        q.add(new HtmlTag("head", false));
+        q.add(new HtmlTag("body", true));
 
-        tags.add(new HtmlTag("p",true));
-        tags.add(new HtmlTag("a", true));
-        tags.add(new HtmlTag("a",false));
-        tags.add(new HtmlTag("p",false));
+        q.add(new HtmlTag("p", true));
+        q.add(new HtmlTag("a", true));
+        q.add(new HtmlTag("a", false));
+        q.add(new HtmlTag("p", false));
 
 
-        tags.add(new HtmlTag("br", false));
-        tags.add(new HtmlTag("p",true));
-        tags.add(new HtmlTag("img"));
-        tags.add(new HtmlTag("p",false));
-        tags.add(new HtmlTag("html",false));
+        q.add(new HtmlTag("br", false));
+        q.add(new HtmlTag("p", true));
+        q.add(new HtmlTag("img"));
+        q.add(new HtmlTag("p", false));
+        q.add(new HtmlTag("html", false));
 
-        HtmlValidator validator = new HtmlValidator(tags);
+        HtmlValidator v = new HtmlValidator(q);
 
-        Assert.assertEquals(expectedOutputToString("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test8.txt"),
-                validatorOutputToString(validator));
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/validate_result_for_test8.txt"),
+                validatorOutputToString(v));
     }
-
     @Test
-    public void addTagTest() {
-        HtmlTag[] tagsArr = {new HtmlTag("Hello"), new HtmlTag("There")};
-        List<HtmlTag> tags = new ArrayList<>(Arrays.asList(tagsArr));
-        HtmlValidator validator = new HtmlValidator();
+    public void testUniqueValidate() {
+        Queue<HtmlTag> q = new LinkedList<>();
+        q.add(new HtmlTag("html", true));  //<b>
+        q.add(new HtmlTag("i", true)); //<i>
+        q.add(new HtmlTag("title", true)); //</i>
+        q.add(new HtmlTag("title", false)); ///b
+        HtmlValidator v = new HtmlValidator(q);
 
-        tags.forEach(validator::addTag);
-
-        Assert.assertEquals(tags, validator.getTags());
+        Assert.assertEquals(expectedOutputToString
+                        ("hw1-HW1-STARTER-MATERIALS/expected_output/my_unique_validate_result"),
+                validatorOutputToString(v));
     }
 
+    // i created a test with a new text file to test the validate method against it.
+// tests null for removeAll, should throw an exception
+    @Test(expected = IllegalArgumentException.class)
+    public void removeNullTest() {
+        HtmlValidator v = new HtmlValidator();
+        v.removeAll(null);
+    }
+// tests null for addq, should throw an exception
     @Test(expected = IllegalArgumentException.class)
     public void addNullTagTest() {
-        HtmlValidator validator = new HtmlValidator();
-        validator.addTag(null);
-    }
-
-    @Test
-    public void removeAllTest() {
-        HtmlTag[] tagsArr = {new HtmlTag("Hello"), new HtmlTag("There")};
-        List<HtmlTag> tags = new ArrayList<>(Arrays.asList(tagsArr));
-        HtmlValidator validator = new HtmlValidator();
-        tags.forEach(validator::addTag);
-        validator.addTag(new HtmlTag("General Kenobi"));
-
-        validator.removeAll("General Kenobi");
-
-        Assert.assertEquals(tags, validator.getTags());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void removeAllNullTest() {
-        HtmlValidator validator = new HtmlValidator();
-
-        validator.removeAll(null);
+        HtmlValidator v = new HtmlValidator();
+        v.addTag(null);
     }
 }
 
